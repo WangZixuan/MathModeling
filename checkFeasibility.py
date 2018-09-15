@@ -45,24 +45,27 @@ def check_feasibility(allocation, pucks, gates):
 
     [rows, cols] = allocation.shape
 
-    indexes = []
+    indexes = {}
 
     for i in range(0, rows):
         allocation_i = allocation[i, :]
 
-        # if each puck is allocated once and only once
-        if np.sum(allocation_i) != 1:
+        # if each puck is allocated at most once
+        if np.sum(allocation_i) > 1:
             return False
-        for j in range (0, cols):
+        for j in range(0, cols):
             if allocation_i[j] == 1:
-                indexes.append(j)
+                indexes[i] = j
                 break
 
     # if this puck's flight_type/arrive_type/depart_type meet the gate's
     for i in range(0, rows):
 
         puck_i = pucks[i]
-        gate_i = gates[indexes[i]]
+        if i in indexes:
+            gate_i = gates[indexes[i]]
+        else:
+            continue
 
         if puck_i.arrive_type == 'D' and gate_i.arrive_type_D == 0:
             return False
@@ -77,9 +80,6 @@ def check_feasibility(allocation, pucks, gates):
             return False
 
         if puck_i.flight_type != gate_i.flight_type:
-            print(puck_i.flight_type)
-            print(gate_i.flight_type)
-            print(i)
             return False
 
     # check if a 45min gap is ok
