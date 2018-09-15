@@ -1,5 +1,4 @@
 import pandas as pd
-import time
 
 WideBody = (['332', '333', '33E', '33H', '33L', '773'])
 
@@ -20,14 +19,16 @@ class Puck:
         if arrive_date == 19:
             self.arrive_time = 0
         else:
-            self.arrive_time = arrive_time.hour * 12 + arrive_time.min / 5
+            arrive_time_split = arrive_time.split(":")
+            self.arrive_time = int(int(arrive_time_split[0]) * 12 + int(arrive_time_split[1]) / 5)
         self.arrive_flight = arrive_flight
         self.arrive_type = arrive_type
 
         if depart_date == 21:
             self.depart_time = 24 * 12
         else:
-            self.depart_time = depart_time.hour * 12 + arrive_time.min / 5
+            depart_time_split = depart_time.split(":")
+            self.depart_time = int(int(depart_time_split[0]) * 12 + int(depart_time_split[1]) / 5)
         self.depart_flight = depart_flight
         self.depart_type = depart_type
 
@@ -40,7 +41,11 @@ class Pucks:
         for index in data_frame.index:
             d = data_frame.loc[index].values[:]
 
-            p = Puck(d[0], d[12], d[2], d[3], d[4], str(d[5]), d[13], d[7], d[8], d[9])
+            # id, arrive_date, arrive_time, arrive_flight, arrive_type,
+            # flight_id, depart_date, depart_time, depart_flight, depart_type
+
+            p = Puck(d[0], d[12], str(d[2]), d[3], d[4],
+                     str(d[5]), d[13], str(d[7]), d[8], d[9])
             # print(p)
             self.all_pucks.append(p)
         # print(self.all_pucks)

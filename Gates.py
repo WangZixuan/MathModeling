@@ -2,8 +2,9 @@ import pandas as pd
 
 
 class Gate:
-    def __init__(self, gate_name, terminal,
+    def __init__(self, id, gate_name, terminal,
                  area, arrive_type, depart_type, flight_type):
+        self.id = id
         self.gate_name = gate_name
         self.terminal = terminal
         self.area = area
@@ -40,13 +41,13 @@ class Gates:
             d = data_frame.loc[index].values[:]
 
             flight_type = 0
-            if d[5]=='W':
+            if d[6] == 'W':
                 flight_type = 1
 
-            g = Gate(d[0], d[1], d[2], d[3], d[4], flight_type)
+            g = Gate(d[0], d[1], d[2], d[3], d[4], d[5], flight_type)
             self.all_gates.append(g)
 
-        print(self.all_gates)
+        # print(self.all_gates)
 
 
 if __name__ == '__main__':
