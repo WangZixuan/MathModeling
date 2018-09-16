@@ -23,5 +23,3 @@ if __name__ == '__main__':
             print("{}-{}".format(i, j))
             if j != cols:
                 f.write(p[i].record_num + "," + g[j].gate_name + "\n")
-
-

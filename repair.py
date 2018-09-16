@@ -15,7 +15,7 @@ def repair(allocation, pucks, gates):
     :return:
     '''
 
-    if checkFeasibility.check_feasibility(allocation, pucks=p, gates=g):
+    if checkFeasibility.check_feasibility(allocation, pucks, gates):
         return allocation
 
     [rows, cols] = allocation.shape
@@ -47,7 +47,7 @@ def repair(allocation, pucks, gates):
             if flag == 1:
                 j = 0
 
-    print(checkFeasibility.check_feasibility(allocation,p,g))
+    print(checkFeasibility.check_feasibility(allocation, pucks, gates))
     return allocation
 
 
