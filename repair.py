@@ -41,18 +41,19 @@ def repair(allocation, pucks, gates):
             # check if a 45 min gap is guaranteed
             if puck_at_gate[j].depart_time + 9 > puck_at_gate[j + 1].arrive_time:
                 allocation[puck_at_gate[j + 1].id, i] = 0
-                puck_at_gate.remove(j + 1)
+                # print('remove {}'.format(puck_at_gate[j + 1].record_num))
+                del puck_at_gate[j + 1]
                 flag = 1
-                j = j + 1
+            j = j + 1
             if flag == 1:
                 j = 0
 
-    print(checkFeasibility.check_feasibility(allocation, pucks, gates))
     return allocation
 
 
 if __name__ =='__main__':
     g = Gates.Gates().all_gates
     p = Pucks.Pucks(gates=g).all_pucks
-    a = np.loadtxt("result.csv", delimiter=',')
+    a = np.loadtxt("test.csv", delimiter=',')
+    a = repair(a, p, g)
     print(checkFeasibility.check_feasibility(a, p, g))
