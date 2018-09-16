@@ -53,6 +53,22 @@ def repair(allocation, pucks, gates):
             if flag == 1:
                 j = 0
 
+    # place those who are misses
+    pucks_copy = [s for s in pucks]
+
+    pucks_copy.sort(key=compare_func.cmp_to_key(initialize.puck_compare_stay_time))
+
+    for i in range(0, len(pucks_copy)):
+        allocation_i = allocation[pucks_copy[i].id, :]
+        if np.sum(allocation_i) == 0:
+            for j in range(0, len(gates)):
+                allocation[pucks_copy[i].id, j] = int(1)
+                if checkFeasibility.check_feasibility(allocation, pucks, gates):
+                    # print("{}-{}".format(pucks_copy[i].id, j))
+                    break
+                else:
+                    allocation[pucks_copy[i].id, j] = 0
+
     return allocation
 
 
