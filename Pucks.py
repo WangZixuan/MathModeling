@@ -9,6 +9,7 @@ class Puck:
                  arrive_date, arrive_time, arrive_flight, arrive_type,
                  flight_id,
                  depart_date, depart_time, depart_flight, depart_type,
+                 record_num,
                  gates
                  ):
         self.id = id
@@ -34,6 +35,8 @@ class Puck:
         self.depart_flight = depart_flight
         self.depart_type = depart_type
 
+        self.record_num = record_num
+
         self.available_gates = []
         for i in range(0, len(gates)):
             if self.arrive_type == 'D' and gates[i].arrive_type_D == 0:
@@ -53,6 +56,7 @@ class Puck:
 
             self.available_gates.append(i)
 
+
 class Pucks:
 
     def __init__(self, gates):
@@ -65,7 +69,7 @@ class Pucks:
             # flight_id, depart_date, depart_time, depart_flight, depart_type
 
             p = Puck(d[0], d[12], str(d[2]), d[3], d[4],
-                     str(d[5]), d[13], str(d[7]), d[8], d[9], gates=gates)
+                     str(d[5]), d[13], str(d[7]), d[8], d[9], d[14], gates=gates)
             # print(p)
             self.all_pucks.append(p)
         # print(self.all_pucks)
