@@ -32,6 +32,8 @@ class Puck:
         self.depart_flight = depart_flight
         self.depart_type = depart_type
 
+        self.available_gates = []
+
 
 class Pucks:
 

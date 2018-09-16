@@ -1,33 +1,10 @@
 import numpy as np
 import Pucks
 import Gates
+import compare_func
 
 
-def cmp_to_key(mycmp):
-    '''
-    Convert a cmp= function into a key= function
-    :param mycmp:
-    :return:
-    '''
-    class K:
-        def __init__(self, obj, *args):
-            self.obj = obj
-        def __lt__(self, other):
-            return mycmp(self.obj, other.obj) < 0
-        def __gt__(self, other):
-            return mycmp(self.obj, other.obj) > 0
-        def __eq__(self, other):
-            return mycmp(self.obj, other.obj) == 0
-        def __le__(self, other):
-            return mycmp(self.obj, other.obj) <= 0
-        def __ge__(self, other):
-            return mycmp(self.obj, other.obj) >= 0
-        def __ne__(self, other):
-            return mycmp(self.obj, other.obj) != 0
-    return K
-
-
-def puck_compare(puck1, puck2):
+def puck_compare_arrive_time(puck1, puck2):
     return puck1.arrive_time - puck2.arrive_time
 
 
@@ -90,7 +67,7 @@ def check_feasibility(allocation, pucks, gates):
                 puck_at_gate.append(pucks[j])
 
         # check now
-        puck_at_gate.sort(key=cmp_to_key(puck_compare))
+        puck_at_gate.sort(key=compare_func.cmp_to_key(puck_compare_arrive_time))
 
         for j in range(0, len(puck_at_gate)-1):
             if puck_at_gate[j].depart_time + 9 > puck_at_gate[j+1].arrive_time:
@@ -106,4 +83,5 @@ if __name__ == '__main__':
          [0, 0, 0, 0, 0, 0, 1, 0],
          [0, 0, 1, 0, 0, 0, 0, 0]
          ]
-    print(check_feasibility(np.array(a), p.all_pucks, g.all_gates))
+    b = np.loadtxt("result.csv", delimiter=',')
+    print(check_feasibility(b, p.all_pucks, g.all_gates))
