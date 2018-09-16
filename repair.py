@@ -4,6 +4,7 @@ import numpy as np
 import checkFeasibility
 import compare_func
 import initialize
+import random
 
 
 def repair(allocation, pucks, gates):
@@ -40,9 +41,13 @@ def repair(allocation, pucks, gates):
             flag = 0
             # check if a 45 min gap is guaranteed
             if puck_at_gate[j].depart_time + 9 > puck_at_gate[j + 1].arrive_time:
-                allocation[puck_at_gate[j + 1].id, i] = 0
-                # print('remove {}'.format(puck_at_gate[j + 1].record_num))
-                del puck_at_gate[j + 1]
+
+                if random.random < 0.7:
+                    allocation[puck_at_gate[j + 1].id, i] = 0
+                    del puck_at_gate[j + 1]
+                else:
+                    allocation[puck_at_gate[j].id, i] = 0
+                    del puck_at_gate[j]
                 flag = 1
             j = j + 1
             if flag == 1:
