@@ -42,7 +42,7 @@ def repair(allocation, pucks, gates):
             # check if a 45 min gap is guaranteed
             if puck_at_gate[j].depart_time + 9 > puck_at_gate[j + 1].arrive_time:
 
-                if random.random < 0.7:
+                if random.random() < 0.7:
                     allocation[puck_at_gate[j + 1].id, i] = 0
                     del puck_at_gate[j + 1]
                 else:
