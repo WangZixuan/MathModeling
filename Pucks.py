@@ -73,4 +73,5 @@ class Pucks:
 
 if __name__ == '__main__':
     g = Gates.Gates().all_gates
-    p = Pucks(g)
+    p = Pucks(gates=g)
+    print(p)
