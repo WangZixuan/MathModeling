@@ -46,8 +46,8 @@ def initialize_greedy(pucks, gates):
 
 
 if __name__ == "__main__":
-    p = Pucks.Pucks().all_pucks
     g = Gates.Gates().all_gates
+    p = Pucks.Pucks(gates=g).all_pucks
 
     # result = initialize(p, g)
     # np.savetxt("result.csv", result, fmt="%d", delimiter=',')

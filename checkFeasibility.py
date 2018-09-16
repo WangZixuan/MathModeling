@@ -77,11 +77,7 @@ def check_feasibility(allocation, pucks, gates):
 
 
 if __name__ == '__main__':
-    p = Pucks.Pucks()
-    g = Gates.Gates()
-    a = [[0, 0, 0, 0, 0, 0, 1, 0],
-         [0, 0, 0, 0, 0, 0, 1, 0],
-         [0, 0, 1, 0, 0, 0, 0, 0]
-         ]
-    b = np.loadtxt("result.csv", delimiter=',')
-    print(check_feasibility(b, p.all_pucks, g.all_gates))
+    g = Gates.Gates().all_gates
+    p = Pucks.Pucks(gates=g).all_pucks
+    a = np.loadtxt("result.csv", delimiter=',')
+    print(check_feasibility(a, p, g))
