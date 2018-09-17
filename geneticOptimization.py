@@ -13,9 +13,9 @@ import copy
 # from multiprocessing import Pro
 
 loopTime = 10000
-populationSize = 10
-crossPercent = 0.1
-mutaPercent = 0.1
+populationSize = 200
+crossPercent = 0.01
+mutaPercent = 0.01
 curOptimalSolution = 0
 curOptimalScore = 0 
 numofMutedGenes = 1
