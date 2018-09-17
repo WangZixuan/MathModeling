@@ -97,7 +97,7 @@ def mutationOperator(pop2ScoreSet,pucks,gates):
                 mutaIndex = random.randint(0,numofGenes)
                 pop2ScoreSet[index1][0][mutaIndex] =  np.zeros(numofGenesDim)
                 mutaSwitch = np.random.ranf()
-                if mutaSwitch < 0.5:
+                if mutaSwitch < 0.6:
                     changeIndex = random.choice(pucks[mutaIndex].available_gates,1)
                     pop2ScoreSet[index1][0][mutaIndex][changeIndex] = 1
             except:
