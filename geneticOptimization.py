@@ -13,12 +13,12 @@ import copy
 # from multiprocessing import Pro
 
 loopTime = 10000
-populationSize = 200
+populationSize = 500
 crossPercent = 0.01
-mutaPercent = 0.01
+mutaPercent = 0.02
 curOptimalSolution = 0
 curOptimalScore = 0 
-numofMutedGenes = 1
+numofMutedGenes = 50
 
 def repairOperator(singleSolution,pucks,gates):
     return repair.repair(singleSolution,pucks,gates)
@@ -95,12 +95,11 @@ def mutationOperator(pop2ScoreSet,pucks,gates):
     numofGenesDim = pop2ScoreSet[0][0].shape[1]
     mutaTimes = int(mutaPercent*len(pop2ScoreSet))
     
-    for index in range(1):
+    for index in range(random.randint(0,mutaTimes)):
     #每轮随机挑选 mutaTimes个解进行变异 
         [index1] = random.choice(Index,1)
         # Index.remove(index1)
-        for loop in range(numofMutedGenes):
-            print("muted genes")   
+        for loop in range(random.randint(0,numofMutedGenes)):
             #每次变异 numofMutedGenes 个基因    
             try:
                 mutaIndex = random.randint(0,numofGenes-1)
