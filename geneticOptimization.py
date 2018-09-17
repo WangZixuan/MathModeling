@@ -12,7 +12,7 @@ import time
 # from multiprocessing import Pro
 
 loopTime = 10000
-populationSize = 200
+populationSize = 400
 crossPercent = 0.015
 mutaPercent = 0.015
 curOptimalSolution = 0
@@ -141,8 +141,10 @@ if __name__ == "__main__":
     gates = Gates.Gates().all_gates
     pucks = Pucks.Pucks(gates=gates).all_pucks
     a = np.loadtxt("result-greedy.csv", delimiter=',')
-    populationSet.append(a)
-    a = np.loadtxt("result.csv", delimiter=',')
+    for i in range(50):
+        a[i][:] = np.zeros(69)
+    # populationSet.append(a)
+    # a = np.loadtxt("result.csv", delimiter=',')
     populationSet.append(a)
     # pool = mp.Pool()
     # info('main line')
