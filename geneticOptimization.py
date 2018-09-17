@@ -12,12 +12,12 @@ import time
 # from multiprocessing import Pro
 
 loopTime = 10000
-populationSize = 100
+populationSize = 300
 crossPercent = 0.015
 mutaPercent = 0.015
 curOptimalSolution = 0
 curOptimalScore = 0 
-numofMutedGenes = 3
+numofMutedGenes = 2
 
 def repairOperator(singleSolution,pucks,gates):
     return repair.repair(singleSolution,pucks,gates)
@@ -26,13 +26,16 @@ def evaluateOperator(population,pucks,gates):
     if check_feasibility(population, pucks, gates):
         return [population,population.sum() - 0.5*np.sign(np.sum(population, axis=0)).sum()]
     else:
-        try:
-            population = repair.repair(population,pucks,gates)
-            return [population,population.sum() - 0.5*np.sign(np.sum(population, axis=0)).sum()]
-        except Exception:
-            print('Evaluator Error')
-            # np.savetxt('wa.txt',population,fmt='%d',delimiter=',')
-            exit(-1)
+        if np.random.ranf() <= 0.5:
+            try:
+                population = repair.repair(population,pucks,gates)
+                return [population,population.sum() - 0.5*np.sign(np.sum(population, axis=0)).sum()]
+            except Exception:
+                print('Evaluator Error')
+                # np.savetxt('wa.txt',population,fmt='%d',delimiter=',')
+                exit(-1)
+        else:
+            return [population,1]
 
 def selectOperator(pop2ScoreSet):
     try:
@@ -60,7 +63,7 @@ def selectOperator(pop2ScoreSet):
     return pop2ScoreSet
 
 def crossoverOperator(pop2ScoreSet):
-    oldPolulation = [s for s in pop2ScoreSet]
+    # oldPolulation = [s for s in pop2ScoreSet]
     # print('CrossOver Running')
     Index = list(range(len(pop2ScoreSet)))
     numofGenes = pop2ScoreSet[0][0].shape[0]
@@ -79,8 +82,8 @@ def crossoverOperator(pop2ScoreSet):
         b = pop2ScoreSet[index2][0][crossoverIndex][:]
         pop2ScoreSet[index1][0][crossoverIndex][:] = b 
         pop2ScoreSet[index2][0][crossoverIndex][:] = a
-    for item in oldPolulation:
-        pop2ScoreSet.append(item)
+    # for item in oldPolulation:
+        # pop2ScoreSet.append(item)
     return pop2ScoreSet
     
 def mutationOperator(pop2ScoreSet,pucks,gates):
