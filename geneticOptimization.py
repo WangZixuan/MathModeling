@@ -6,9 +6,12 @@ import Gates
 import compare_func
 from checkFeasibility import *
 import repair
+import multiprocessing as mp
+import os
+import time
+# from multiprocessing import Pro
 
-
-loopTime = 10
+loopTime = 1
 populationSize = 10
 crossPercent = 0.2
 mutaPercent = 0.2
@@ -28,7 +31,7 @@ def evaluateOperator(population,pucks,gates):
             return [population,population.sum() - 0.5*np.sign(np.sum(population, axis=0)).sum()]
         except Exception:
             print('Evaluator Error')
-            np.savetxt('wa.txt',population,fmt='%d',delimiter=',')
+            # np.savetxt('wa.txt',population,fmt='%d',delimiter=',')
             exit(-1)
 
 def selectOperator(pop2ScoreSet):
@@ -102,7 +105,7 @@ def mutationOperator(pop2ScoreSet,pucks,gates):
                 exit(-1)
     return pop2ScoreSet
         
-def geneticOptimization(populationSet,pucks,gates):
+def geneticOptimization(populationSet,pucks,gates,id):
     global curOptimalSolution
     global curOptimalScore 
     pop2ScoreSet = [[s,0] for s in populationSet]
@@ -121,7 +124,7 @@ def geneticOptimization(populationSet,pucks,gates):
                 if item[1] >= localOptimalScore:
                     curOptimalScore = item[1]
                     curOptimalSolution = item[0]
-                    np.savetxt('opt.txt',curOptimalSolution,fmt='%d',delimiter=',')
+                    np.savetxt('opt'+str(process)+'.txt',curOptimalSolution,fmt='%d',delimiter=',')
         # print('3',[s[1] for s in pop2ScoreSet])
         pop2ScoreSet = crossoverOperator(pop2ScoreSet)
         # print('3',[s[1] for s in pop2ScoreSet])
@@ -141,7 +144,13 @@ if __name__ == "__main__":
     populationSet.append(a)
     a = np.loadtxt("result.csv", delimiter=',')
     populationSet.append(a)
-    geneticOptimization(populationSet,pucks,gates)
+    # pool = mp.Pool()
+    # info('main line')
+    for process in range(mp.cpu_count()-2):
+        p = mp.Process(target=geneticOptimization, args=([s for s in populationSet],pucks,gates,process,))
+        p.start()
+        # p.join()
+    # geneticOptimization(populationSet,pucks,gates)
     
     
 
