@@ -12,7 +12,7 @@ import time
 # from multiprocessing import Pro
 
 loopTime = 10000
-populationSize = 100
+populationSize = 200
 crossPercent = 0.015
 mutaPercent = 0.015
 curOptimalSolution = 0
