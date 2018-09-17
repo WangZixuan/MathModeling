@@ -11,10 +11,10 @@ import os
 import time
 # from multiprocessing import Pro
 
-loopTime = 1
-populationSize = 10
-crossPercent = 0.2
-mutaPercent = 0.2
+loopTime = 1000
+populationSize = 50
+crossPercent = 0.1
+mutaPercent = 0.1
 curOptimalSolution = 0
 curOptimalScore = 0 
 numofMutedGenes = 2
