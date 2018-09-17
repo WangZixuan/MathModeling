@@ -12,12 +12,12 @@ import time
 # from multiprocessing import Pro
 
 loopTime = 10000
-populationSize = 400
+populationSize = 100
 crossPercent = 0.015
 mutaPercent = 0.015
 curOptimalSolution = 0
 curOptimalScore = 0 
-numofMutedGenes = 5
+numofMutedGenes = 3
 
 def repairOperator(singleSolution,pucks,gates):
     return repair.repair(singleSolution,pucks,gates)
@@ -60,6 +60,7 @@ def selectOperator(pop2ScoreSet):
     return pop2ScoreSet
 
 def crossoverOperator(pop2ScoreSet):
+    oldPolulation = [s for s in pop2ScoreSet]
     # print('CrossOver Running')
     Index = list(range(len(pop2ScoreSet)))
     numofGenes = pop2ScoreSet[0][0].shape[0]
@@ -78,29 +79,30 @@ def crossoverOperator(pop2ScoreSet):
         b = pop2ScoreSet[index2][0][crossoverIndex][:]
         pop2ScoreSet[index1][0][crossoverIndex][:] = b 
         pop2ScoreSet[index2][0][crossoverIndex][:] = a
+    for item in oldPolulation:
+        pop2ScoreSet.append(item)
     return pop2ScoreSet
     
 def mutationOperator(pop2ScoreSet,pucks,gates):
     Index = list(range(len(pop2ScoreSet)))
-    numofGenes = pop2ScoreSet[0][0].shape[0]
     numofGenes = pop2ScoreSet[0][0].shape[0]
     numofGenesDim = pop2ScoreSet[0][0].shape[1]
     mutaTimes = int(mutaPercent*len(pop2ScoreSet))
 
     for index in range(mutaTimes):
     #每轮随机挑选 mutaTimes个解进行变异
+        [index1] = random.choice(Index,1,replace=False)
+        Index.remove(index1)
         for loop in range(numofMutedGenes):
-            #每次变异 numofMutedGenes 个基因
-            [index1] = random.choice(Index,1,replace=False)
+            #每次变异 numofMutedGenes 个基因    
             try:
-                Index.remove(index1)
-                mutaIndex = random.randint(0,numofGenes)
+                mutaIndex = random.randint(0,numofGenes-1)
                 pop2ScoreSet[index1][0][mutaIndex] =  np.zeros(numofGenesDim)
                 mutaSwitch = np.random.ranf()
                 if mutaSwitch < 0.6:
                     changeIndex = random.choice(pucks[mutaIndex].available_gates,1)
                     pop2ScoreSet[index1][0][mutaIndex][changeIndex] = 1
-            except:
+            except Exception as ex:
                 print('Muta Error')
                 exit(-1)
     return pop2ScoreSet
@@ -109,7 +111,7 @@ def geneticOptimization(populationSet,pucks,gates,id):
     global curOptimalSolution
     global curOptimalScore 
     pop2ScoreSet = [[s,0] for s in populationSet]
-    for loopIndex in range(loopTime):
+    while(1)
         for index in range(len(pop2ScoreSet)):
             pop2ScoreSet[index] = evaluateOperator(pop2ScoreSet[index][0],pucks,gates)
         print(loopIndex,'round','optimal score',curOptimalScore,len(pop2ScoreSet),max([s[1] for s in pop2ScoreSet]))
@@ -124,7 +126,7 @@ def geneticOptimization(populationSet,pucks,gates,id):
                 if item[1] >= localOptimalScore:
                     curOptimalScore = item[1]
                     curOptimalSolution = item[0]
-                    np.savetxt('opt'+str(process)+'.txt',curOptimalSolution,fmt='%d',delimiter=',')
+                    np.savetxt('opt'+str(id)+'.txt',curOptimalSolution,fmt='%d',delimiter=',')
         # print('3',[s[1] for s in pop2ScoreSet])
         pop2ScoreSet = crossoverOperator(pop2ScoreSet)
         # print('3',[s[1] for s in pop2ScoreSet])
@@ -141,13 +143,12 @@ if __name__ == "__main__":
     gates = Gates.Gates().all_gates
     pucks = Pucks.Pucks(gates=gates).all_pucks
     a = np.loadtxt("result-greedy.csv", delimiter=',')
-    for i in range(150):
-        a[i][:] = np.zeros(69)
     # populationSet.append(a)
     # a = np.loadtxt("result.csv", delimiter=',')
     populationSet.append(a)
     # pool = mp.Pool()
     # info('main line')
+    print(pucks[29].available_gates)
     pset = [ ]
     for process in range(mp.cpu_count()-2):
         p = mp.Process(target=geneticOptimization, args=([s for s in populationSet],pucks,gates,process,))
@@ -156,7 +157,7 @@ if __name__ == "__main__":
     
     for p in pset:
         p.join()
-    # geneticOptimization(populationSet,pucks,gates)
+    # geneticOptimization(populationSet,pucks,gates,1)
     
     
 
