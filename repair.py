@@ -97,7 +97,7 @@ def repair(allocation, pucks, gates):
 
                 if can_change == 1:
                     allocation[i, a] = 1
-                    print("insert {} to gate {}".format(i, a))
+                    # print("insert {} to gate {}".format(i, a))
                     pucks_at_gate[a].append(pucks[i])
                     # print(checkFeasibility.check_feasibility(allocation, p, g))
 
