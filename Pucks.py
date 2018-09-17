@@ -1,10 +1,20 @@
+'''
+All pucks.
+Read from InputData.xlsx
+@Author Zixuan Wang
+@Date 2018/9/15
+'''
+
+
 import pandas as pd
 import Gates
 
+# Mark which plane is wide or narrow
 WideBody = (['332', '333', '33E', '33H', '33L', '773'])
 
 
 class Puck:
+
     def __init__(self, id,
                  arrive_date, arrive_time, arrive_flight, arrive_type,
                  flight_id,
@@ -60,6 +70,10 @@ class Puck:
 class Pucks:
 
     def __init__(self, gates):
+        '''
+        Initialize gates information from InputData.xlsx
+        :param gates:
+        '''
         self.all_pucks = []
         data_frame = pd.read_excel('InputData.xlsx')
         for index in data_frame.index:
@@ -74,7 +88,7 @@ class Pucks:
             self.all_pucks.append(p)
         # print(self.all_pucks)
 
-
+# test main function
 if __name__ == '__main__':
     g = Gates.Gates().all_gates
     p = Pucks(gates=g)

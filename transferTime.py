@@ -1,9 +1,14 @@
+'''
+Count passengers' transfer time.
+'''
+
 import Gates
 import Tickets
 import Pucks
 import numpy as np
 import checkFeasibility
 
+# time table
 WalkingTime = {
     'TN-TN': 2, 'TN-TC': 3, 'TN-TS': 4, 'TN-SN': 5, 'TN-SC': 4, 'TN-SS': 5, 'TN-SE': 5,
     'TC-TN': 3, 'TC-TC': 2, 'TC-TS': 3, 'TC-SN': 4, 'TC-SC': 3, 'TC-SS': 4, 'TC-SE': 4,
@@ -17,7 +22,6 @@ WalkingTime = {
 
 def transfer_gates(allocation, gates, tickets, pucks):
     '''
-
     :param allocation:
     :param gates:
     :param tickets:
@@ -69,6 +73,14 @@ def transfer_gates(allocation, gates, tickets, pucks):
 
 
 def transfer_walking_time(allocation, gates, tickets, pucks):
+    '''
+
+    :param allocation:
+    :param gates:
+    :param tickets:
+    :param pucks:
+    :return: walking_time, failed_passengers
+    '''
     assert checkFeasibility.check_feasibility(allocation, pucks, gates)
     pairs = transfer_gates(allocation, gates, tickets, pucks)
 
@@ -97,7 +109,7 @@ def transfer_walking_time(allocation, gates, tickets, pucks):
     # print(walking_time)
     return walking_time, failed_passengers
 
-
+# test main function
 if __name__ == '__main__':
     g = Gates.Gates().all_gates
     t = Tickets.Tickets().all_tickets

@@ -1,3 +1,10 @@
+'''
+All tickets.
+Read from InputData.xlsx
+@Author Zixuan Wang
+@Date 2018/9/15
+'''
+
 import pandas as pd
 
 

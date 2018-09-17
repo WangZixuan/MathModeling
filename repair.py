@@ -1,3 +1,6 @@
+'''
+repair allocation matrix which is non-feasible
+'''
 import Gates
 import Pucks
 import numpy as np
@@ -108,6 +111,7 @@ def repair(allocation, pucks, gates):
     return allocation
 
 
+# test main function
 if __name__ == '__main__':
     g = Gates.Gates().all_gates
     p = Pucks.Pucks(gates=g).all_pucks

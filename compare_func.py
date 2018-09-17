@@ -1,3 +1,10 @@
+'''
+Helper function for sorting.
+@Author Zixuan Wang
+@Date 2018/9/16
+'''
+
+
 def cmp_to_key(mycmp):
     '''
     Convert a cmp= function into a key= function

@@ -1,3 +1,7 @@
+'''
+Initialize a random solution
+'''
+
 import Pucks
 import Gates
 import checkFeasibility
@@ -6,12 +10,24 @@ import compare_func
 
 
 def puck_compare_stay_time(puck1, puck2):
+    '''
+    Compare two pucks based on their stay time, used in sort function.
+    :param puck1:
+    :param puck2:
+    :return:
+    '''
     stay1 = puck1.depart_time - puck1.arrive_time
     stay2 = puck2.depart_time - puck2.arrive_time
     return stay1 - stay2
 
 
 def initialize(pucks, gates):
+    '''
+    Initialize based on index starting from 0.
+    :param pucks:
+    :param gates:
+    :return: allocation matrix
+    '''
     allocation_result = np.zeros((len(pucks), len(gates)))
     for i in range(0, len(pucks)):
 
@@ -27,6 +43,12 @@ def initialize(pucks, gates):
 
 
 def initialize_greedy(pucks, gates):
+    '''
+    Initialize starting from least stay time.
+    :param pucks:
+    :param gates:
+    :return: allocation matrix
+    '''
 
     pucks_copy = [s for s in pucks]
 
@@ -44,7 +66,7 @@ def initialize_greedy(pucks, gates):
 
     return allocation_result
 
-
+# main function
 if __name__ == "__main__":
     g = Gates.Gates().all_gates
     p = Pucks.Pucks(gates=g).all_pucks
