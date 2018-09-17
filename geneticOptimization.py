@@ -11,13 +11,13 @@ import os
 import time
 # from multiprocessing import Pro
 
-loopTime = 1000
-populationSize = 50
-crossPercent = 0.1
-mutaPercent = 0.1
+loopTime = 10000
+populationSize = 100
+crossPercent = 0.015
+mutaPercent = 0.015
 curOptimalSolution = 0
 curOptimalScore = 0 
-numofMutedGenes = 2
+numofMutedGenes = 5
 
 def repairOperator(singleSolution,pucks,gates):
     return repair.repair(singleSolution,pucks,gates)
@@ -110,9 +110,9 @@ def geneticOptimization(populationSet,pucks,gates,id):
     global curOptimalScore 
     pop2ScoreSet = [[s,0] for s in populationSet]
     for loopIndex in range(loopTime):
-        print(loopIndex,'round','optimal score',curOptimalScore,len(pop2ScoreSet),[s[1] for s in pop2ScoreSet])
         for index in range(len(pop2ScoreSet)):
             pop2ScoreSet[index] = evaluateOperator(pop2ScoreSet[index][0],pucks,gates)
+        print(loopIndex,'round','optimal score',curOptimalScore,len(pop2ScoreSet),max([s[1] for s in pop2ScoreSet]))
         # print('1',len(pop2ScoreSet))
         # 
         pop2ScoreSet = selectOperator(pop2ScoreSet)
@@ -146,10 +146,14 @@ if __name__ == "__main__":
     populationSet.append(a)
     # pool = mp.Pool()
     # info('main line')
+    pset = [ ]
     for process in range(mp.cpu_count()-2):
         p = mp.Process(target=geneticOptimization, args=([s for s in populationSet],pucks,gates,process,))
         p.start()
-        # p.join()
+        pset.append(p)
+    
+    for p in pset:
+        p.join()
     # geneticOptimization(populationSet,pucks,gates)
     
     
