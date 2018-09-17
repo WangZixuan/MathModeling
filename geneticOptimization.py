@@ -141,7 +141,7 @@ if __name__ == "__main__":
     gates = Gates.Gates().all_gates
     pucks = Pucks.Pucks(gates=gates).all_pucks
     a = np.loadtxt("result-greedy.csv", delimiter=',')
-    for i in range(50):
+    for i in range(150):
         a[i][:] = np.zeros(69)
     # populationSet.append(a)
     # a = np.loadtxt("result.csv", delimiter=',')
