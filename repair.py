@@ -76,7 +76,7 @@ def repair(allocation, pucks, gates):
         not_visited.remove(i)
 
         if np.sum(allocation_i) == 0:
-            available = pucks[i].available_gates
+            available = [x for x in pucks[i].available_gates]
 
             while len(available) != 0:
                 a = np.random.choice(available)
