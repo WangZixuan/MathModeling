@@ -111,7 +111,9 @@ def geneticOptimization(populationSet,pucks,gates,id):
     global curOptimalSolution
     global curOptimalScore 
     pop2ScoreSet = [[s,0] for s in populationSet]
+    loopIndex = 0
     while(True):
+        loopIndex += 1
         for index in range(len(pop2ScoreSet)):
             pop2ScoreSet[index] = evaluateOperator(pop2ScoreSet[index][0],pucks,gates)
         print(loopIndex,'round','optimal score',curOptimalScore,len(pop2ScoreSet),max([s[1] for s in pop2ScoreSet]))
