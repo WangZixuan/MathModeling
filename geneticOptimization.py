@@ -25,9 +25,10 @@ def repairOperator(singleSolution,pucks,gates):
 
 def evaluateOperator(population,pucks,gates):
     if check_feasibility(population, pucks, gates):
+        if np.random.ranf() <= 0.5:
+            population = repair.repair(population,pucks,gates)
         return [population,population.sum() - 0.5*np.sign(np.sum(population, axis=0)).sum()]
     else:
-        print('repair')
         if np.random.ranf() <= 0.5:
             try:
                 population = repair.repair(population,pucks,gates)
@@ -154,9 +155,8 @@ if __name__ == "__main__":
     populationSet.append(a)
     # pool = mp.Pool()
     # info('main line')
-    print(pucks[29].available_gates)
     pset = [ ]
-    for process in range(min(mp.cpu_count()-2,1)):
+    for process in range(min(mp.cpu_count()-2,100)):
         p = mp.Process(target=geneticOptimization, args=([s for s in populationSet],pucks,gates,process,))
         p.start()
         pset.append(p)
