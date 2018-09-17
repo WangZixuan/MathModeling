@@ -93,7 +93,7 @@ def initialize_for_passengers(pucks, gates, tickets):
         dep_f = flight_names_arr.index(t.depart_flight)
         path_matrix[arr_f][dep_f] += t.passengers_num
 
-    
+
 
 
 

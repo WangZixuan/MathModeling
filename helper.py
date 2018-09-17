@@ -75,14 +75,18 @@ def add_puck(allocation, pucks, gates, index_puck, index_gate):
     return False, allocation
 
 
-def delete_puck(allocation, index_puck, index_gate):
+def delete_puck(allocation, index_puck):
     '''
     Delete pucks[index_puck] to gates[index_gate]
     :param allocation:
     :param index_puck:
-    :param index_gate:
     :return:
     '''
+
+    allocation_i = allocation[index_puck, :]
+    index_gate = allocation_i.index(1)
+    assert np.sum(allocation_i) == 1
+
     if allocation[index_puck][index_gate] == 1:
         allocation[index_puck][index_gate] = 0
         return True, allocation
