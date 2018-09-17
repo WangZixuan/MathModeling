@@ -64,19 +64,26 @@ def repair(allocation, pucks, gates):
             if allocation[j, i] == 1:
                 pucks_at_gate[i].append(pucks[j])
 
-    pucks_copy = [s for s in pucks]
+    not_visited = [s for s in range(0, rows)]
 
-    for i in range(0, len(pucks_copy)):
-        allocation_i = allocation[pucks_copy[i].id, :]
+    while len(not_visited) != 0:
+
+        i = np.random.choice(not_visited)
+        # print("size is {}".format(len(not_visited)))
+
+        allocation_i = allocation[i, :]
+
+        not_visited.remove(i)
+
         if np.sum(allocation_i) == 0:
+            available = pucks[i].available_gates
 
-            available = pucks[pucks_copy[i].id].available_gates
-
-            for a in range(0, len(available)):
-                pucks_existed = pucks_at_gate[available[a]]
+            while len(available) != 0:
+                a = np.random.choice(available)
+                pucks_existed = pucks_at_gate[a]
 
                 pucks_existed_copy = [s for s in pucks_existed]
-                pucks_existed_copy.append(pucks[pucks_copy[i].id])
+                pucks_existed_copy.append(pucks[i])
 
                 # check if ok
                 can_change = 1
@@ -89,12 +96,14 @@ def repair(allocation, pucks, gates):
                         break
 
                 if can_change == 1:
-                    allocation[pucks_copy[i].id, available[a]] = 1
-                    # print("insert {} to gate {}".format(pucks_copy[i].id, available[a]))
-                    pucks_at_gate[available[a]].append(pucks[pucks_copy[i].id])
+                    allocation[i, a] = 1
+                    print("insert {} to gate {}".format(i, a))
+                    pucks_at_gate[a].append(pucks[i])
                     # print(checkFeasibility.check_feasibility(allocation, p, g))
 
                     break
+                else:
+                    available.remove(a)
 
     return allocation
 
