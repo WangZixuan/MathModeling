@@ -9,15 +9,16 @@ import repair
 import multiprocessing as mp
 import os
 import time
+import copy
 # from multiprocessing import Pro
 
 loopTime = 10000
-populationSize = 300
-crossPercent = 0.015
-mutaPercent = 0.015
+populationSize = 10
+crossPercent = 0.1
+mutaPercent = 0.1
 curOptimalSolution = 0
 curOptimalScore = 0 
-numofMutedGenes = 2
+numofMutedGenes = 1
 
 def repairOperator(singleSolution,pucks,gates):
     return repair.repair(singleSolution,pucks,gates)
@@ -26,6 +27,7 @@ def evaluateOperator(population,pucks,gates):
     if check_feasibility(population, pucks, gates):
         return [population,population.sum() - 0.5*np.sign(np.sum(population, axis=0)).sum()]
     else:
+        print('repair')
         if np.random.ranf() <= 0.5:
             try:
                 population = repair.repair(population,pucks,gates)
@@ -47,9 +49,9 @@ def selectOperator(pop2ScoreSet):
         exit(-1)
 
     #add the top 2 opt solution to save directly
-    for i in range(2):
+    for i in range(1):
         pop2ScoreSet.append(tmp[min(i,len(tmp)-1)])
-    
+
     # remove the first two from tmp list 
     try:
         totalScore = reduce(lambda x,y:x+y[1], tmp, 0)
@@ -59,7 +61,7 @@ def selectOperator(pop2ScoreSet):
     weighted_probability /= weighted_probability.sum()
     
     for item in random.choice(range(len(tmp)), populationSize-2, p = weighted_probability):
-        pop2ScoreSet.append(tmp[item])
+        pop2ScoreSet.append(copy.deepcopy(tmp[item]))
     return pop2ScoreSet
 
 def crossoverOperator(pop2ScoreSet):
@@ -91,18 +93,19 @@ def mutationOperator(pop2ScoreSet,pucks,gates):
     numofGenes = pop2ScoreSet[0][0].shape[0]
     numofGenesDim = pop2ScoreSet[0][0].shape[1]
     mutaTimes = int(mutaPercent*len(pop2ScoreSet))
-
-    for index in range(mutaTimes):
-    #每轮随机挑选 mutaTimes个解进行变异
-        [index1] = random.choice(Index,1,replace=False)
-        Index.remove(index1)
+    
+    for index in range(1):
+    #每轮随机挑选 mutaTimes个解进行变异 
+        [index1] = random.choice(Index,1)
+        # Index.remove(index1)
         for loop in range(numofMutedGenes):
+            print("muted genes")   
             #每次变异 numofMutedGenes 个基因    
             try:
                 mutaIndex = random.randint(0,numofGenes-1)
                 pop2ScoreSet[index1][0][mutaIndex] =  np.zeros(numofGenesDim)
                 mutaSwitch = np.random.ranf()
-                if mutaSwitch < 0.6:
+                if mutaSwitch < 0.5:
                     changeIndex = random.choice(pucks[mutaIndex].available_gates,1)
                     pop2ScoreSet[index1][0][mutaIndex][changeIndex] = 1
             except Exception as ex:
@@ -119,28 +122,26 @@ def geneticOptimization(populationSet,pucks,gates,id):
         loopIndex += 1
         for index in range(len(pop2ScoreSet)):
             pop2ScoreSet[index] = evaluateOperator(pop2ScoreSet[index][0],pucks,gates)
-        print(loopIndex,'round','optimal score',curOptimalScore,len(pop2ScoreSet),max([s[1] for s in pop2ScoreSet]))
+
+        scores  = [s[1] for s in pop2ScoreSet]
+        localOptimalScore = max(scores)
+        print(loopIndex,'round','optimal score',curOptimalScore,len(pop2ScoreSet),[s[1] for s in pop2ScoreSet])
         # print('1',len(pop2ScoreSet))
         # 
         pop2ScoreSet = selectOperator(pop2ScoreSet)
-        # print('2',[s[1] for s in pop2ScoreSet])
-        scores  = [s[1] for s in pop2ScoreSet]
-        localOptimalScore = max(scores)
+
         if(localOptimalScore > curOptimalScore):
             for item in pop2ScoreSet:
                 if item[1] >= localOptimalScore:
                     curOptimalScore = item[1]
                     curOptimalSolution = item[0]
                     np.savetxt('opt'+str(id)+'.txt',curOptimalSolution,fmt='%d',delimiter=',')
+        pop2ScoreSet.append([curOptimalSolution,curOptimalScore])
         # print('3',[s[1] for s in pop2ScoreSet])
         pop2ScoreSet = crossoverOperator(pop2ScoreSet)
         # print('3',[s[1] for s in pop2ScoreSet])
-        pop2ScoreSet.append([curOptimalSolution,curOptimalScore])
-        # print('3',[s[1] for s in pop2ScoreSet])
         pop2ScoreSet = mutationOperator(pop2ScoreSet,pucks,gates)
         # print('3',[s[1] for s in pop2ScoreSet])
-        pop2ScoreSet.append([curOptimalSolution,curOptimalScore])
-        # print('3',len(pop2ScoreSet))
 
 if __name__ == "__main__":
     populationSet = []
@@ -155,7 +156,7 @@ if __name__ == "__main__":
     # info('main line')
     print(pucks[29].available_gates)
     pset = [ ]
-    for process in range(mp.cpu_count()-2):
+    for process in range(min(mp.cpu_count()-2,1)):
         p = mp.Process(target=geneticOptimization, args=([s for s in populationSet],pucks,gates,process,))
         p.start()
         pset.append(p)
