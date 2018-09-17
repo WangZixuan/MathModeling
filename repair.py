@@ -66,8 +66,6 @@ def repair(allocation, pucks, gates):
 
     pucks_copy = [s for s in pucks]
 
-    pucks_copy.sort(key=compare_func.cmp_to_key(initialize.puck_compare_stay_time))
-
     for i in range(0, len(pucks_copy)):
         allocation_i = allocation[pucks_copy[i].id, :]
         if np.sum(allocation_i) == 0:
