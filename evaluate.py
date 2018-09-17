@@ -20,5 +20,10 @@ if __name__=="__main__":
     gates = Gates.Gates().all_gates
     pucks = Pucks.Pucks(gates=gates).all_pucks
     for id in range(mp.cpu_count()-2):
-        population = np.loadtxt('opt'+str(id)+'.txt', delimiter=',')
-        print(evaluateOperator(population,pucks,gates))
+        try:
+            population = np.loadtxt('opt'+str(id)+'.txt', delimiter=',')
+            print(evaluateOperator(population,pucks,gates))
+        except:
+            print('File load error')
+            exit(-1)
+        
