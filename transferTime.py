@@ -99,7 +99,43 @@ def transfer_gates(allocation, gates, tickets, pucks):
     return tickets_gates
 
 
-def transfer_time(allocation, gates, tickets, pucks):
+def transfer_time_2(allocation, gates, tickets, pucks):
+    '''
+
+    :param allocation:
+    :param gates:
+    :param tickets:
+    :param pucks:
+    :return: transfer_time in the form of (size of tickets, 1)
+    '''
+    assert checkFeasibility.check_feasibility(allocation, pucks, gates)
+    pairs = transfer_gates(allocation, gates, tickets, pucks)
+
+    transfer_time_all = []
+
+    for i in range(0, len(pairs)):
+
+        if pairs[i][0] < 0 or pairs[i][1] < 0:
+            continue
+
+        if pairs[i][2] is None or pairs[i][3] is None:
+            continue
+
+        arrive_gate = gates[pairs[i][0]]
+        depart_gate = gates[pairs[i][1]]
+
+        identifier_terminal = pairs[i][4] + arrive_gate.terminal + '-' + pairs[i][5] + depart_gate.terminal
+
+        print("{}-{}".format(pairs[i][2], pairs[i][3]))
+
+        transfer_time_temp = pairs[i][6] * PaperWorkTime[identifier_terminal]
+
+        transfer_time_all.append(transfer_time_temp)
+
+    return transfer_time_all
+
+
+def transfer_time_3(allocation, gates, tickets, pucks):
     '''
 
     :param allocation:
@@ -111,7 +147,7 @@ def transfer_time(allocation, gates, tickets, pucks):
     assert checkFeasibility.check_feasibility(allocation, pucks, gates)
     pairs = transfer_gates(allocation, gates, tickets, pucks)
 
-    transfer_time_all = np.zeros((len(pairs), 2))
+    transfer_time_all = []
 
     for i in range(0, len(pairs)):
 
@@ -128,22 +164,17 @@ def transfer_time(allocation, gates, tickets, pucks):
 
         identifier_area = arrive_gate.terminal + arrive_gate.area[0] + '-' + depart_gate.terminal + depart_gate.area[0]
 
-        transfer_time_2 = -1
-        transfer_time_3 = -1
-
         print("{}-{}".format(pairs[i][2], pairs[i][3]))
 
-        if pairs[i][2] + PaperWorkTime[identifier_terminal] <= pairs[i][3]:
-            transfer_time_2 = pairs[i][6] * PaperWorkTime[identifier_terminal]
+        if pairs[i][2] + PaperWorkTime[identifier_terminal] + WalkingTime[identifier_area] \
+                + math.ceil(MRTRound[identifier_terminal] * 1.6) <= pairs[i][3]:
+            transfer_time_temp = pairs[i][6] * (PaperWorkTime[identifier_terminal] +
+                                             WalkingTime[identifier_area] +
+                                             math.ceil(MRTRound[identifier_terminal] * 1.6))
 
-            if pairs[i][2] + PaperWorkTime[identifier_terminal] + WalkingTime[identifier_area] \
-                    + math.ceil(MRTRound[identifier_terminal] * 1.6) <= pairs[i][3]:
-                transfer_time_3 = pairs[i][6] * (PaperWorkTime[identifier_terminal] +
-                                                 WalkingTime[identifier_area] +
-                                                 math.ceil(MRTRound[identifier_terminal] * 1.6))
-
-        transfer_time_all[i][0] = transfer_time_2
-        transfer_time_all[i][1] = transfer_time_3
+            transfer_time_all.append(transfer_time_temp)
+        else:
+            transfer_time_all.append(-1)
 
     return transfer_time_all
 
@@ -154,5 +185,6 @@ if __name__ == '__main__':
     t = Tickets.Tickets().all_tickets
     p = Pucks.Pucks(g).all_pucks
     a = np.loadtxt("result-greedy.csv", delimiter=',')
-    tta = transfer_time(a, g, t, p)
-    print(tta)
+    tt2 = transfer_time_2(a, g, t, p)
+    tt3 = transfer_time_2(a, g, t, p)
+    print(tt2)

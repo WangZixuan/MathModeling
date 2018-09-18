@@ -58,7 +58,7 @@ def initialize_greedy(pucks, gates):
 
     allocation_result = np.zeros((len(pucks_copy), len(gates)))
     for i in range(0, len(pucks_copy)):
-        for j in range(0, len(gates)):
+        for j in range(len(gates) -1, -1, -1):
             allocation_result[pucks_copy[i].id, j] = int(1)
             if checkFeasibility.check_feasibility(allocation_result, pucks, gates):
                 print("{}-{}".format(pucks_copy[i].id, j))
@@ -148,10 +148,10 @@ if __name__ == "__main__":
     # np.savetxt("result.csv", result, fmt="%d", delimiter=',')
     # print(checkFeasibility.check_feasibility(result, p, g))
 
-    # result_greedy = initialize_greedy(p, g)
-    # np.savetxt("result-greedy.csv", result_greedy, fmt="%d", delimiter=',')
-    # print(checkFeasibility.check_feasibility(result_greedy, p, g))
+    result_greedy = initialize_greedy(p, g)
+    np.savetxt("result-greedy.csv", result_greedy, fmt="%d", delimiter=',')
+    print(checkFeasibility.check_feasibility(result_greedy, p, g))
 
-    result_passengers = initialize_for_passengers(p, g, t)
-    np.savetxt("result-passengers.csv", result_passengers, fmt="%d", delimiter=',')
-    print(checkFeasibility.check_feasibility(result_passengers, p, g))
+    # result_passengers = initialize_for_passengers(p, g, t)
+    # np.savetxt("result-passengers.csv", result_passengers, fmt="%d", delimiter=',')
+    # print(checkFeasibility.check_feasibility(result_passengers, p, g))
