@@ -72,7 +72,7 @@ def safunc(a,pucks,gates):
                     a = copy.deepcopy(newAllocation)
                     curScore = newScore
         t+=1
-        T=1000/(1+t)
+        T=1000/math.log2(1+t)
 
 if __name__ == '__main__':
     g = Gates.Gates().all_gates
