@@ -1,9 +1,15 @@
+'''
+Count passengers' transfer time.
+'''
+
 import Gates
 import Tickets
 import Pucks
 import numpy as np
+import math
 import checkFeasibility
 
+# walking time table
 WalkingTime = {
     'TN-TN': 2, 'TN-TC': 3, 'TN-TS': 4, 'TN-SN': 5, 'TN-SC': 4, 'TN-SS': 5, 'TN-SE': 5,
     'TC-TN': 3, 'TC-TC': 2, 'TC-TS': 3, 'TC-SN': 4, 'TC-SC': 3, 'TC-SS': 4, 'TC-SE': 4,
@@ -14,16 +20,34 @@ WalkingTime = {
     'SE-TN': 5, 'SE-TC': 4, 'SE-TS': 5, 'SE-SN': 4, 'SE-SC': 3, 'SE-SS': 4, 'SE-SE': 2,
 }
 
+# paperwork time table
+PaperWorkTime = {
+    'DT-DT': 3, 'DT-DS': 4, 'DT-IT': 7, 'DT-IS': 8,
+    'DS-DT': 4, 'DS-DS': 3, 'DS-IT': 8, 'DS-IS': 7,
+    'IT-DT': 7, 'IT-DS': 8, 'IT-IT': 4, 'IT-IS': 6,
+    'IS-DT': 8, 'IS-DS': 9, 'IS-IT': 6, 'IS-IS': 4,
+}
+
+# MRT round times
+MRTRound = {
+    'DT-DT': 0, 'DT-DS': 1, 'DT-IT': 0, 'DT-IS': 1,
+    'DS-DT': 1, 'DS-DS': 0, 'DS-IT': 1, 'DS-IS': 0,
+    'IT-DT': 0, 'IT-DS': 1, 'IT-IT': 0, 'IT-IS': 1,
+    'IS-DT': 1, 'IS-DS': 2, 'IS-IT': 1, 'IS-IS': 0,
+}
+
 
 def transfer_gates(allocation, gates, tickets, pucks):
     '''
-
     :param allocation:
     :param gates:
     :param tickets:
     :param pucks:
     :return: tickets_gates pairs in the form
-            [arrive_gate_id, depart_gate_id, arrive_time, depart_time, passengers_num]
+            [arrive_gate_id, depart_gate_id,
+            arrive_time, depart_time,
+            arrive_type, depart_type
+            passengers_num, ticket_id]
     '''
     tickets_gates = []
 
@@ -33,12 +57,15 @@ def transfer_gates(allocation, gates, tickets, pucks):
         this_ticket_depart_gate = -1
         this_ticket_arrive_time = None
         this_ticket_depart_time = None
+        this_ticket_arrive_type = None
+        this_ticket_depart_type = None
 
         # which flight it is
         for i in range(0, len(pucks)):
             if pucks[i].arrive_flight == this_ticket.arrive_flight:
                 allocation_i = allocation[i, :]
                 this_ticket_arrive_time = pucks[i].arrive_time
+                this_ticket_arrive_type = pucks[i].arrive_type
                 if this_ticket.arrive_date == 19:
                     this_ticket_arrive_time -= 24*12
 
@@ -52,7 +79,8 @@ def transfer_gates(allocation, gates, tickets, pucks):
         for i in range(0, len(pucks)):
             if pucks[i].depart_flight == this_ticket.depart_flight:
                 allocation_i = allocation[i, :]
-                this_ticket_depart_time = pucks[i].arrive_time
+                this_ticket_depart_time = pucks[i].depart_time
+                this_ticket_depart_type = pucks[i].depart_type
                 if this_ticket.depart_date == 21:
                     this_ticket_depart_time += 24*12
 
@@ -63,18 +91,27 @@ def transfer_gates(allocation, gates, tickets, pucks):
                         break
                 break
 
-        tickets_gates.append([this_ticket_arrive_gate, this_ticket_depart_gate, this_ticket_arrive_time, this_ticket_depart_time, this_ticket.passengers_num])
+        tickets_gates.append([this_ticket_arrive_gate, this_ticket_depart_gate,
+                              this_ticket_arrive_time, this_ticket_depart_time,
+                              this_ticket_arrive_type, this_ticket_depart_type,
+                              this_ticket.passengers_num, this_ticket.id])
 
     return tickets_gates
 
 
-def transfer_walking_time(allocation, gates, tickets, pucks):
+def transfer_time_2(allocation, gates, tickets, pucks):
+    '''
+
+    :param allocation:
+    :param gates:
+    :param tickets:
+    :param pucks:
+    :return: transfer_time in the form of (size of tickets, 1)
+    '''
     assert checkFeasibility.check_feasibility(allocation, pucks, gates)
     pairs = transfer_gates(allocation, gates, tickets, pucks)
 
-    walking_time = 0
-
-    failed_passengers = 0
+    transfer_time_all = []
 
     for i in range(0, len(pairs)):
 
@@ -87,22 +124,67 @@ def transfer_walking_time(allocation, gates, tickets, pucks):
         arrive_gate = gates[pairs[i][0]]
         depart_gate = gates[pairs[i][1]]
 
-        identifier = arrive_gate.terminal + arrive_gate.area[0] + '-' + depart_gate.terminal + depart_gate.area[0]
+        identifier_terminal = pairs[i][4] + arrive_gate.terminal + '-' + pairs[i][5] + depart_gate.terminal
 
-        if pairs[i][2] + WalkingTime[identifier] <= pairs[i][3]:
-            walking_time += pairs[i][4] * WalkingTime[identifier]
+        # print("{}-{}".format(pairs[i][2], pairs[i][3]))
+
+        transfer_time_temp = pairs[i][6] * PaperWorkTime[identifier_terminal]
+
+        transfer_time_all.append(transfer_time_temp)
+
+    return transfer_time_all
+
+
+def transfer_time_3(allocation, gates, tickets, pucks):
+    '''
+
+    :param allocation:
+    :param gates:
+    :param tickets:
+    :param pucks:
+    :return: transfer_time in the form of (size of tickets, 2)
+    '''
+    assert checkFeasibility.check_feasibility(allocation, pucks, gates)
+    pairs = transfer_gates(allocation, gates, tickets, pucks)
+
+    transfer_time_all = []
+
+    for i in range(0, len(pairs)):
+
+        if pairs[i][0] < 0 or pairs[i][1] < 0:
+            continue
+
+        if pairs[i][2] is None or pairs[i][3] is None:
+            continue
+
+        arrive_gate = gates[pairs[i][0]]
+        depart_gate = gates[pairs[i][1]]
+
+        identifier_terminal = pairs[i][4] + arrive_gate.terminal + '-' + pairs[i][5] + depart_gate.terminal
+
+        identifier_area = arrive_gate.terminal + arrive_gate.area[0] + '-' + depart_gate.terminal + depart_gate.area[0]
+
+        # print("{}-{}".format(pairs[i][2], pairs[i][3]))
+
+        if pairs[i][2] + PaperWorkTime[identifier_terminal] + WalkingTime[identifier_area] \
+                + math.ceil(MRTRound[identifier_terminal] * 1.6) <= pairs[i][3]:
+            transfer_time_temp = pairs[i][6] * (PaperWorkTime[identifier_terminal] +
+                                             WalkingTime[identifier_area] +
+                                             math.ceil(MRTRound[identifier_terminal] * 1.6))
+
+            transfer_time_all.append(transfer_time_temp)
         else:
-            failed_passengers += 1
+            transfer_time_all.append(-1)
 
-    # print(walking_time)
-    return walking_time, failed_passengers
+    return transfer_time_all
 
 
+# test main function
 if __name__ == '__main__':
     g = Gates.Gates().all_gates
     t = Tickets.Tickets().all_tickets
     p = Pucks.Pucks(g).all_pucks
     a = np.loadtxt("result-greedy.csv", delimiter=',')
-    wt, fp = transfer_walking_time(a, g, t, p)
-    print(wt)
-    print(fp)
+    tt2 = transfer_time_2(a, g, t, p)
+    tt3 = transfer_time_2(a, g, t, p)
+    print(tt2)

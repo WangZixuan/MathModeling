@@ -1,3 +1,9 @@
+'''
+Check if an allocation matrix is feasible.
+@Author Zixuan Wang
+@Date 2018/9/16
+'''
+
 import numpy as np
 import Pucks
 import Gates
@@ -5,6 +11,12 @@ import compare_func
 
 
 def puck_compare_arrive_time(puck1, puck2):
+    '''
+    Compare two pucks based on their arrival time, used in sort function.
+    :param puck1:
+    :param puck2:
+    :return:
+    '''
     return puck1.arrive_time - puck2.arrive_time
 
 
@@ -76,6 +88,7 @@ def check_feasibility(allocation, pucks, gates):
     return True
 
 
+# test main function
 if __name__ == '__main__':
     g = Gates.Gates().all_gates
     p = Pucks.Pucks(gates=g).all_pucks

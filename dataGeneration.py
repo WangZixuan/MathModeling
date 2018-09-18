@@ -1,7 +1,15 @@
+'''
+Generate data with given form from allocation matrix.
+@Author Zixuan Wang
+@Date 2018/9/16
+'''
+
 import Pucks
 import Gates
 import numpy as np
 
+
+# main function
 if __name__ == '__main__':
     g = Gates.Gates().all_gates
     p = Pucks.Pucks(g).all_pucks

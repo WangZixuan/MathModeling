@@ -1,3 +1,11 @@
+'''
+All gates.
+Read from InputData.xlsx
+@Author Zixuan Wang
+@Date 2018/9/15
+'''
+
+
 import pandas as pd
 
 
@@ -49,6 +57,6 @@ class Gates:
 
         # print(self.all_gates)
 
-
+# test main function
 if __name__ == '__main__':
     g = Gates()
