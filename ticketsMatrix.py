@@ -21,7 +21,7 @@ def get_path_matrix(pucks, tickets):
                 depart_index = i
 
         if arrive_index > 0 and depart_index > 0 and arrive_index != depart_index:
-            allocation_matrix[arrive_index][depart_index] += 1
+            allocation_matrix[arrive_index][depart_index] += one_ticket.passengers_num
     return allocation_matrix
 
 
