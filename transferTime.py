@@ -164,7 +164,7 @@ def transfer_time_3(allocation, gates, tickets, pucks):
 
         identifier_area = arrive_gate.terminal + arrive_gate.area[0] + '-' + depart_gate.terminal + depart_gate.area[0]
 
-        # print("{}-{}".format(pairs[i][2], pairs[i][3]))
+        print("{}-{}".format(pairs[i][2], pairs[i][3]))
 
         if pairs[i][2] + PaperWorkTime[identifier_terminal] + WalkingTime[identifier_area] \
                 + math.ceil(MRTRound[identifier_terminal] * 1.6) <= pairs[i][3]:
@@ -185,6 +185,6 @@ if __name__ == '__main__':
     t = Tickets.Tickets().all_tickets
     p = Pucks.Pucks(g).all_pucks
     a = np.loadtxt("result-greedy.csv", delimiter=',')
-    tt2 = transfer_time_2(a, g, t, p)
-    tt3 = transfer_time_2(a, g, t, p)
-    print(tt2)
+    # tt2 = transfer_time_2(a, g, t, p)
+    tt3 = transfer_time_3(a, g, t, p)
+    print(tt3.shape)
