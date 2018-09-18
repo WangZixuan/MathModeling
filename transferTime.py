@@ -126,7 +126,7 @@ def transfer_time_2(allocation, gates, tickets, pucks):
 
         identifier_terminal = pairs[i][4] + arrive_gate.terminal + '-' + pairs[i][5] + depart_gate.terminal
 
-        print("{}-{}".format(pairs[i][2], pairs[i][3]))
+        # print("{}-{}".format(pairs[i][2], pairs[i][3]))
 
         transfer_time_temp = pairs[i][6] * PaperWorkTime[identifier_terminal]
 
@@ -164,7 +164,7 @@ def transfer_time_3(allocation, gates, tickets, pucks):
 
         identifier_area = arrive_gate.terminal + arrive_gate.area[0] + '-' + depart_gate.terminal + depart_gate.area[0]
 
-        print("{}-{}".format(pairs[i][2], pairs[i][3]))
+        # print("{}-{}".format(pairs[i][2], pairs[i][3]))
 
         if pairs[i][2] + PaperWorkTime[identifier_terminal] + WalkingTime[identifier_area] \
                 + math.ceil(MRTRound[identifier_terminal] * 1.6) <= pairs[i][3]:
