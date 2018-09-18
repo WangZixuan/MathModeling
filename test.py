@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 gates = Gates.Gates().all_gates
 pucks = Pucks.Pucks(gates=gates).all_pucks
-a = np.loadtxt("result-greedy.csv", delimiter=',')
+a = np.loadtxt("opt.txt", delimiter=',')
 # print(a[:,0].shape)
 cnt = 0 
 for index in range(303):

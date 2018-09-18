@@ -13,6 +13,7 @@ import os
 import time
 import copy
 import math
+from initialize import *
 
 # def can_add(allocation, pucks, gates, index_puck, index_gate):
 
@@ -39,11 +40,18 @@ def transpose(a, pucks, gates):
         else:
             assigned.append(index)
     cIndex = random.choice(assigned)
-    delete_puck(s, cIndex)
-    for item in unassign:
+    gate =list(s[cIndex,:]).index(1)
+    for index in range(303):
+        if s[index,gate] == 1:
+            unassign.append(index)
+
+    s[:,gate] = np.zeros(303)
+    newPucks = [ pucks[k] for k in unassign]
+    newPucks.sort(key=compare_func.cmp_to_key(puck_compare_depart_and_stay_time))
+    for item in newPucks:
         for index in range(69):
-            if(can_add(s,pucks,gates,item,index)):
-                add_puck(s, pucks, gates, cIndex, index)
+            if(can_add(s,pucks,gates,item.id,index)):
+                add_puck(s, pucks, gates, item.id, index)
     return s
 
 def safunc(a,pucks,gates):
