@@ -83,13 +83,12 @@ def initialize_greedy(pucks, gates):
     return allocation_result
 
 
-def initialize_for_passengers(pucks, gates, tickets, want_path_matrix=False):
+def initialize_for_passengers(pucks, gates, tickets):
     '''
     A greedy way to make passengers walk least
     :param pucks:
     :param gates:
     :param tickets:
-    :param want_path_matrix:
     :return: allocation matrix
     '''
 
@@ -115,9 +114,6 @@ def initialize_for_passengers(pucks, gates, tickets, want_path_matrix=False):
         arr_f = flight_names_arr.index(ti.arrive_flight)
         dep_f = flight_names_arr.index(ti.depart_flight)
         path_matrix[arr_f][dep_f] += ti.passengers_num
-
-    if want_path_matrix:
-        return flight_names_arr, path_matrix
 
     flight_usage = {}
     for f in flight_names_arr:

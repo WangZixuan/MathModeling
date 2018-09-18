@@ -57,6 +57,7 @@ class Gates:
 
         # print(self.all_gates)
 
+
 # test main function
 if __name__ == '__main__':
     g = Gates()
