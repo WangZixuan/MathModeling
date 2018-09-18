@@ -8,6 +8,7 @@ import Pucks
 import numpy as np
 import math
 import checkFeasibility
+import compare_func
 
 # walking time table
 WalkingTime = {
@@ -35,6 +36,14 @@ MRTRound = {
     'IT-DT': 0, 'IT-DS': 1, 'IT-IT': 0, 'IT-IS': 1,
     'IS-DT': 1, 'IS-DS': 2, 'IS-IT': 1, 'IS-IS': 0,
 }
+
+
+def compare_transfer_time(pair1, pair2):
+    if pair1[3] is None or pair1[2] is None or pair2[3] is None or pair2[2] is None:
+        return 0
+    transfer_user_time1 = pair1[3] - pair1[2]
+    transfer_user_time2 = pair2[3] - pair2[2]
+    return transfer_user_time1 - transfer_user_time2
 
 
 def transfer_gates(allocation, gates, tickets, pucks):
@@ -146,6 +155,7 @@ def transfer_time_3(allocation, gates, tickets, pucks):
     '''
     assert checkFeasibility.check_feasibility(allocation, pucks, gates)
     pairs = transfer_gates(allocation, gates, tickets, pucks)
+    # pairs.sort(key=compare_func.cmp_to_key(compare_transfer_time))
 
     transfer_time_all = []
 
@@ -164,19 +174,18 @@ def transfer_time_3(allocation, gates, tickets, pucks):
 
         identifier_area = arrive_gate.terminal + arrive_gate.area[0] + '-' + depart_gate.terminal + depart_gate.area[0]
 
-        print("{}-{}".format(pairs[i][2], pairs[i][3]))
+        # print("{}-{}".format(pairs[i][2], pairs[i][3]))
 
-        if pairs[i][2] + PaperWorkTime[identifier_terminal] + WalkingTime[identifier_area] \
-                + math.ceil(MRTRound[identifier_terminal] * 1.6) <= pairs[i][3]:
-            transfer_time_temp = pairs[i][6] * (PaperWorkTime[identifier_terminal] +
-                                             WalkingTime[identifier_area] +
-                                             math.ceil(MRTRound[identifier_terminal] * 1.6))
-
+        used_time = PaperWorkTime[identifier_terminal] + WalkingTime[identifier_area] + \
+                    math.ceil(MRTRound[identifier_terminal] * 1.6)
+        if pairs[i][2] + used_time <= pairs[i][3]:
+            transfer_time_temp = pairs[i][6] * used_time
             transfer_time_all.append(transfer_time_temp)
         else:
             transfer_time_all.append(-1)
 
     return transfer_time_all
+
 
 
 # test main function
@@ -187,4 +196,3 @@ if __name__ == '__main__':
     a = np.loadtxt("result-greedy.csv", delimiter=',')
     # tt2 = transfer_time_2(a, g, t, p)
     tt3 = transfer_time_3(a, g, t, p)
-    print(tt3.shape)

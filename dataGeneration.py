@@ -14,7 +14,7 @@ if __name__ == '__main__':
     g = Gates.Gates().all_gates
     p = Pucks.Pucks(g).all_pucks
 
-    allocation = np.loadtxt("result-greedy.csv", delimiter=',')
+    allocation = np.loadtxt("opt.csv", delimiter=',')
 
     [rows, cols] = allocation.shape
 
@@ -31,3 +31,18 @@ if __name__ == '__main__':
             print("{}-{}".format(i, j))
             if j != cols:
                 f.write(p[i].record_num + "," + g[j].gate_name + "\n")
+
+    with open("final-gates.csv", "w") as f:
+        f.write("Gate-Name,飞机\n")
+        for i in range(0, cols):
+            allocation_i = allocation[:, i]
+            j = 0
+            feiji = []
+            while j < rows:
+                if allocation_i[j] == 1:
+                    feiji.append(p[j].record_num)
+                j += 1
+            f.write(g[i].gate_name)
+            [f.write(","+x) for x in feiji]
+            f.write("\n")
+
