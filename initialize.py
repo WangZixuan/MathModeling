@@ -8,6 +8,7 @@ import Tickets
 import checkFeasibility
 import numpy as np
 import compare_func
+import operator
 
 
 def puck_compare_stay_time(puck1, puck2):
@@ -84,21 +85,57 @@ def initialize_for_passengers(pucks, gates, tickets):
         if p.depart_flight[0] != '*':
             flight_names.add(p.depart_flight)
 
+    for ti in tickets:
+        if ti.arrive_flight not in flight_names:
+            flight_names.add(ti.arrive_flight)
+        if ti.depart_flight not in flight_names:
+            flight_names.add(ti.depart_flight)
+
     path_matrix = np.zeros((len(flight_names), len(flight_names)))
 
     flight_names_arr = list(flight_names)
 
-    for t in tickets:
-        arr_f = flight_names_arr.index(t.arrive_flight)
-        dep_f = flight_names_arr.index(t.depart_flight)
-        path_matrix[arr_f][dep_f] += t.passengers_num
+    for ti in tickets:
+        arr_f = flight_names_arr.index(ti.arrive_flight)
+        dep_f = flight_names_arr.index(ti.depart_flight)
+        path_matrix[arr_f][dep_f] += ti.passengers_num
 
+    flight_usage = {}
+    for f in flight_names_arr:
+        flight_usage[f] = 0
 
+    for i in range(0, len(flight_names_arr)):
+        for j in range(0, len(flight_names_arr)):
+            flight_usage[flight_names_arr[i]] += path_matrix[i][j]
+            flight_usage[flight_names_arr[j]] += path_matrix[i][j]
 
+    sorted_flight_usage = sorted(flight_usage.items(), key=operator.itemgetter(1), reverse=True)
 
+    allocation_result = np.zeros((len(pucks), len(gates)))
 
+    for flight_item in sorted_flight_usage:
 
+        # search this item
+        for i in range(0, len(pucks)):
+            flag = False
+            if pucks[i].arrive_flight == flight_item[0] or pucks[i].depart_flight == flight_item[0]:
+                available = pucks[i].available_gates
 
+                while len(available) != 0:
+                    choice = np.random.choice(available)
+                    available.remove(choice)
+                    allocation_result[i, choice] = 1
+                    if checkFeasibility.check_feasibility(allocation_result, pucks, gates):
+                        print("{}-{}".format(i, choice))
+                        flag = True
+                        break
+                    else:
+                        allocation_result[i, choice] = 0
+
+            if flag:
+                break
+
+    return allocation_result
 
 
 # main function
@@ -116,4 +153,5 @@ if __name__ == "__main__":
     # print(checkFeasibility.check_feasibility(result_greedy, p, g))
 
     result_passengers = initialize_for_passengers(p, g, t)
-    print(1)
+    np.savetxt("result-passengers.csv", result_passengers, fmt="%d", delimiter=',')
+    print(checkFeasibility.check_feasibility(result_passengers, p, g))
