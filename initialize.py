@@ -23,6 +23,20 @@ def puck_compare_stay_time(puck1, puck2):
     return stay1 - stay2
 
 
+def puck_compare_depart_and_stay_time(puck1, puck2):
+    '''
+    Compare two pucks based on their depart and stay time, used in sort function.
+    :param puck1:
+    :param puck2:
+    :return:
+    '''
+    if puck1.depart_time == puck2.depart_time:
+        stay1 = puck1.depart_time - puck1.arrive_time
+        stay2 = puck2.depart_time - puck2.arrive_time
+        return stay1 - stay2
+    return puck1.depart_time - puck2.depart_time
+
+
 def initialize(pucks, gates):
     '''
     Initialize based on index starting from 0.
@@ -54,7 +68,7 @@ def initialize_greedy(pucks, gates):
 
     pucks_copy = [s for s in pucks]
 
-    pucks_copy.sort(key=compare_func.cmp_to_key(puck_compare_stay_time))
+    pucks_copy.sort(key=compare_func.cmp_to_key(puck_compare_depart_and_stay_time))
 
     allocation_result = np.zeros((len(pucks_copy), len(gates)))
     for i in range(0, len(pucks_copy)):
