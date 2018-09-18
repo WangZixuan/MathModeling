@@ -83,7 +83,7 @@ def delete_puck(allocation, index_puck):
     :return:
     '''
 
-    allocation_i = allocation[index_puck, :]
+    allocation_i = list(allocation[index_puck, :])
     index_gate = allocation_i.index(1)
     assert np.sum(allocation_i) == 1
 
