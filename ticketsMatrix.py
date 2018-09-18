@@ -6,8 +6,15 @@ import Gates
 import Tickets
 import numpy as np
 
+
 def get_path_matrix(pucks, tickets):
-    allocation_matrix = np.zeros((len(pucks), len(pucks)))
+    '''
+
+    :param pucks:
+    :param tickets:
+    :return:
+    '''
+    path_matrix = np.zeros((len(pucks), len(pucks)))
     # sum = 0
     for one_ticket in tickets:
         arrive_name = one_ticket.arrive_flight
@@ -22,10 +29,10 @@ def get_path_matrix(pucks, tickets):
                 depart_index = i
 
         if arrive_index > 0 and depart_index > 0 and arrive_index != depart_index:
-            allocation_matrix[depart_index][arrive_index] += one_ticket.passengers_num
+            path_matrix[arrive_index][depart_index] += one_ticket.passengers_num
             # sum += one_ticket.passengers_num
     # print(sum)
-    return allocation_matrix
+    return path_matrix
 
 
 if __name__ == '__main__':
