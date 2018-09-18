@@ -18,7 +18,7 @@ plt.rcParams['axes.unicode_minus']=False
 
 gates = Gates.Gates().all_gates
 pucks = Pucks.Pucks(gates=gates).all_pucks
-a = np.loadtxt("result-greedy.csv", delimiter=',')
+a = np.loadtxt("opt.csv", delimiter=',')
 
 anpai = np.zeros([69,288])
 

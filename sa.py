@@ -39,13 +39,14 @@ def transpose(a, pucks, gates):
             unassign.append(index)
         else:
             assigned.append(index)
-    cIndex = random.choice(assigned)
-    gate =list(s[cIndex,:]).index(1)
-    for index in range(303):
-        if s[index,gate] == 1:
-            unassign.append(index)
-
-    s[:,gate] = np.zeros(303)
+    gateSet = random.choice(list(range(69)),random.randint(1,3),replace=False)
+    for gate in gateSet:
+        for index in range(303):
+            if s[index,gate] == 1:
+                unassign.append(index)
+                assigned.remove(index)
+    for gate in gateSet:
+        s[:,gate] = np.zeros(303)
     newPucks = [ pucks[k] for k in unassign]
     newPucks.sort(key=compare_func.cmp_to_key(puck_compare_depart_and_stay_time))
     for item in newPucks:
