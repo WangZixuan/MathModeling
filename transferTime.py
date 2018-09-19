@@ -122,6 +122,8 @@ def transfer_time_2(allocation, gates, tickets, pucks):
 
     transfer_time_all = []
 
+    count = 0
+
     for i in range(0, len(pairs)):
 
         if pairs[i][0] < 0 or pairs[i][1] < 0:
@@ -137,11 +139,16 @@ def transfer_time_2(allocation, gates, tickets, pucks):
 
         # print("{}-{}".format(pairs[i][2], pairs[i][3]))
 
-        transfer_time_temp = pairs[i][6] * PaperWorkTime[identifier_terminal]
+        if pairs[i][2] + PaperWorkTime[identifier_terminal] <= pairs[i][3]:
+            transfer_time_temp = pairs[i][6] * PaperWorkTime[identifier_terminal]
+            transfer_time_all.append(transfer_time_temp)
+            count += pairs[i][6]
+        else:
+            transfer_time_all.append(-1)
 
-        transfer_time_all.append(transfer_time_temp)
 
-    return transfer_time_all
+
+    return count, transfer_time_all
 
 
 def transfer_time_3(allocation, gates, tickets, pucks):
@@ -158,6 +165,8 @@ def transfer_time_3(allocation, gates, tickets, pucks):
     # pairs.sort(key=compare_func.cmp_to_key(compare_transfer_time))
 
     transfer_time_all = []
+
+    count = 0
 
     for i in range(0, len(pairs)):
 
@@ -181,11 +190,61 @@ def transfer_time_3(allocation, gates, tickets, pucks):
         if pairs[i][2] + used_time <= pairs[i][3]:
             transfer_time_temp = pairs[i][6] * used_time
             transfer_time_all.append(transfer_time_temp)
+            count += pairs[i][6]
         else:
             transfer_time_all.append(-1)
 
-    return transfer_time_all
+    return count, transfer_time_all
 
+
+def generate_matrix(allocation, pucks, gates):
+    '''
+    TODO useless function
+    :param allocation:
+    :param pucks:
+    :param gates:
+    :return:
+    '''
+
+    F = np.zeros([303,303])
+    for i in range(303):
+        if allocation[i,:].sum() == 0:
+            continue
+        index1 = pucks[i].arrive_type
+        index2 = gates[list(allocation[i, :]).index(1)].terminal
+        index5 = gates[list(allocation[i, :]).index(1)].area
+        for j in range(303):
+            if allocation[j,:].sum() == 0:
+                continue
+            index3 = pucks[j].depart_type
+            index4 = gates[list(allocation[j, :]).index(1)].terminal
+            index6 = gates[list(allocation[j, :]).index(1)].area
+            # print(allocation[j,:].sum())
+            # print(index1,index2,index3,index4)
+            temp = PaperWorkTime[index1+index2+'-'+index3+index4]
+            temp += WalkingTime[index2+index5[0]+'-'+index4+index6[0]]
+            temp += math.ceil(MRTRound[index1+index2+'-'+index3+index4] * 1.6)
+
+            F[i, j] = temp
+
+    return F
+
+
+def generate_puck_to_puck_matrix(pucks):
+    '''
+
+    :param pucks:
+    :return:
+    '''
+    puck_to_puck_matrix = np.zeros([303, 303])
+    for i in range(0, 303):
+        arr_t = pucks[i].arrive_time
+        for j in range(0, 303):
+            dep_t = pucks[j].depart_time
+
+            if arr_t + 9 < dep_t:
+                puck_to_puck_matrix[i, j] = dep_t - arr_t
+    return puck_to_puck_matrix
 
 
 # test main function
@@ -193,6 +252,10 @@ if __name__ == '__main__':
     g = Gates.Gates().all_gates
     t = Tickets.Tickets().all_tickets
     p = Pucks.Pucks(g).all_pucks
-    a = np.loadtxt("result-greedy.csv", delimiter=',')
+    a = np.loadtxt("opt.csv", delimiter=',')
     # tt2 = transfer_time_2(a, g, t, p)
-    tt3 = transfer_time_3(a, g, t, p)
+    # tt3 = transfer_time_3(a, g, t, p)
+
+    # generate_matrix(a, p, g)
+
+    generate_puck_to_puck_matrix(p)

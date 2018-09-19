@@ -40,4 +40,7 @@ if __name__ == '__main__':
     p = Pucks.Pucks(gates=g).all_pucks
     t = Tickets.Tickets().all_tickets
     matrix = get_path_matrix(p, t)
+
+    a = np.loadtxt("result-greedy.csv", delimiter=',')
+
     print(matrix)
